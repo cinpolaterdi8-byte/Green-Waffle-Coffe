@@ -18,9 +18,10 @@ API_VERSION = os.environ.get("API_VERSION", "v27.0")
 URL = f"https://graph.facebook.com/{API_VERSION}/{PHONE_NUMBER_ID}/messages"
 
 
+
 def whatsapp_gonder(payload):
     if not ACCESS_TOKEN or not PHONE_NUMBER_ID:
-        print("WhatsApp ayarları eksik.")
+        print("HATA: ACCESS_TOKEN veya PHONE_NUMBER_ID eksik.")
         return False
 
     headers = {
@@ -35,12 +36,16 @@ def whatsapp_gonder(payload):
             headers=headers,
             timeout=20
         )
-        print("WhatsApp API:", response.status_code)
+
+        print("WhatsApp API Durum:", response.status_code)
+        print("WhatsApp API Yanıt:", response.text)
+
         return response.ok
 
     except requests.RequestException as hata:
-        print("Bağlantı hatası:", hata)
+        print("WhatsApp Bağlantı Hatası:", str(hata))
         return False
+
 
 
 def metin_gonder(to_phone, mesaj):
