@@ -225,8 +225,14 @@ def webhook_dogrula():
 
 
 @app.route("/webhook", methods=["POST"])
+
+@app.route("/webhook", methods=["POST"])
 def webhook_mesaj():
+
+    print("WhatsApp Webhook POST isteği geldi.")
+
     if not imza_gecerli_mi():
+        print("HATA: Webhook imza doğrulaması başarısız.")
         return "Geçersiz imza.", 403
 
     data = request.get_json(silent=True) or {}
@@ -236,11 +242,17 @@ def webhook_mesaj():
             for change in entry.get("changes", []):
                 value = change.get("value", {})
 
-                for message in value.get("messages", []):
+                messages = value.get("messages", [])
+
+                print("Gelen mesaj sayısı:", len(messages))
+
+                for message in messages:
+                    print("Gelen mesaj tipi:", message.get("type"))
                     gelen_mesaji_isle(message)
 
     except Exception as hata:
-        print("Webhook hatası:", hata)
+        print("Webhook hatası:", repr(hata))
         return "İşlem hatası.", 500
 
     return "EVENT_RECEIVED", 200
+
